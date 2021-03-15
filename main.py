@@ -37,8 +37,8 @@ Migrate(app, db)
 
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    #name = db.Column(db.String(50))
-
+    name = db.Column(db.String(50))
+    password = db.Column(db.String(50))
     note = relationship("Notes", backref="Users", lazy=True)
 
 
