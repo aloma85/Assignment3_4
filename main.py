@@ -74,3 +74,36 @@ def token_required(f):
             return f(current_user, *args, **kwargs)
 
     return decorator
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def signup_user():
+    data = request.get_json()
+
+    hashed_password = generate_password_hash(data['password'], method='sha256')
+
+    new_user = Users(name=data['name'], password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'registered successfully'})
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    auth = request.authorization
+
+    if not auth or not auth.username or not auth.password:
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+
+    user = Users.query.filter_by(name=auth.username).first()
+
+    if check_password_hash(user.password, auth.password):
+        token = jwt.encode(
+            {'id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+            app.config['SECRET_KEY'])
+        login_user(user)
+        return jsonify({'token': token})
+
+    return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+
