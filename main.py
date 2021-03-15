@@ -13,7 +13,6 @@ import os
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 
-
 app = Flask(__name__)
 
 login_manager = LoginManager()
@@ -21,6 +20,7 @@ dir = os.path.abspath(os.path.dirname(__file__))
 login_manager.init_app(app)
 login_manager.login_view = "login"
 admin = Admin(app)
+
 
 @login_manager.user_loader
 def load_user(userid):
@@ -65,5 +65,12 @@ def token_required(f):
         if not token:
             return jsonify({'message': 'a valid token is missing'})
 
+        try:
+            data = token
+            current_user = Users.query.filter_by(public_id=data['public_id']).first()
+        except:
+            return jsonify({'message': 'token is invalid'})
+
+            return f(current_user, *args, **kwargs)
 
     return decorator
