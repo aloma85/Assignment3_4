@@ -21,8 +21,14 @@ admin = Admin(app)
 def load_user(userid):
     return Users.query.get(userid)
 
+
+app.config['SECRET_KEY'] = 'Th1s1ss3cr3t'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(dir, "notes.db")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
 db = SQLAlchemy(app)
 Migrate(app, db)
+
 
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
