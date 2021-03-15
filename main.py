@@ -107,3 +107,12 @@ def login():
 
     return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
 
+
+@app.route("/delete_User/<int:id>", methods=["DELETE"])
+def delete_user(id):
+    user = Users.query.get(id)
+    if not user:
+        return jsonify({'message': 'No User available with this id'})
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted'})
