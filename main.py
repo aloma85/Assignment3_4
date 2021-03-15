@@ -47,3 +47,23 @@ class Notes(db.Model):
     title = db.Column(db.String(255))
     body = db.Column(db.String(255))
     user = Column(db.Integer, ForeignKey('users.id'), nullable=False)
+
+
+admin.add_view(ModelView(Users, db.session))
+admin.add_view(ModelView(Notes, db.session))
+
+
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+
+        token = None
+
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+
+
+    return decorator
