@@ -3,9 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import Boolean, Column, ForeignKey, func
 from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user
+import jwt
+import datetime
+from functools import wraps
 import os
+from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 
 
@@ -32,6 +37,13 @@ Migrate(app, db)
 
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    password = db.Column(db.String(50))
+    #name = db.Column(db.String(50))
+
     note = relationship("Notes", backref="Users", lazy=True)
+
+
+class Notes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    body = db.Column(db.String(255))
+    user = Column(db.Integer, ForeignKey('users.id'), nullable=False)
