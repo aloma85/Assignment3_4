@@ -116,3 +116,25 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'message': 'User deleted'})
+
+
+@app.route("/delete_notes/<int:id>", methods=["DELETE"])
+def delete_Note(id):
+    note = Notes.query.get(id)
+    if not note:
+        return jsonify({'message': 'No notes available with this id'})
+    db.session.delete(note)
+    db.session.commit()
+    return jsonify({'message': 'note deleted'})
+
+
+@app.route('/note', methods=['POST'])
+def add_note():
+    data = request.get_json()
+    new_note = Notes(title=data['title'],body=data["body"], user=current_user.id)
+    db.session.add(new_note)
+    db.session.commit()
+
+    return jsonify({'message':"added"})
+
+
