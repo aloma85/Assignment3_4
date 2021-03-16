@@ -161,3 +161,25 @@ def note_by_id(id):
     notes.update(value)
 
     return jsonify({"notes":notes})
+
+
+@app.route("/notes/<title>", methods = ["POST","GET"])
+def note_by_title(title):
+    note = Notes.query.filter_by(title = title).first()
+    if not note:
+        return jsonify({"message":"No notes found with specifiec title"})
+    notes = {}
+    notes.update({"id":note.id,"title":note.title,"body":note.body})
+    return jsonify({"notes":notes})
+
+
+@app.route("/user/note/<int:id>" , methods = ["POST"])
+def update_note_by_id(id):
+    data = request.get_json()
+    note = Notes.query.get(id)
+    if not note:
+        return jsonify({"Message":"No Notes present with this Id"})
+    note.title = data["title"]
+    note.body = data["body"]
+    db.session.commit()
+    return jsonify({"message":"successfully update through id"})
