@@ -183,3 +183,18 @@ def update_note_by_id(id):
     note.body = data["body"]
     db.session.commit()
     return jsonify({"message":"successfully update through id"})
+
+
+@app.route("/user/note/<title>" , methods=["PUT"])
+def update_note_by_title(title):
+    data = request.get_json()
+    note = Notes.query.filter_by(title = title).first()
+    if not note:
+        return jsonify({"Message":"No notes present with this title"})
+    note.title = data["title"]
+    note.body = data["body"]
+    db.session.commit()
+    return jsonify({"Message":"sucessfully update through title"})
+
+if __name__=="__main__":
+    app.run(debug=True)
