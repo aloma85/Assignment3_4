@@ -138,3 +138,26 @@ def add_note():
     return jsonify({'message':"added"})
 
 
+@app.route("/user/<int:id>" , methods=["POST"])
+def get_all_notes(id):
+    note = Notes.query.all()
+    if not note:
+        return jsonify({"message":"No notes found for this users"})
+    notes = {}
+    for note in note:
+        value = {'id':note.id ,'title': note.title, "body":note.body,
+                 'user':1}
+        notes.update(value)
+    return jsonify({"notes":notes})
+
+
+@app.route("/notes/<int:id>" , methods=["POST","GET"])
+def note_by_id(id):
+    note = Notes.query.get(id)
+    if not note:
+        return jsonify({"message":"No Notes found of this Id"})
+    notes = {}
+    value = {"id":note.id,"title":note.title,"body":note.body}
+    notes.update(value)
+
+    return jsonify({"notes":notes})
